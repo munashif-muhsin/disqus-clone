@@ -41,6 +41,9 @@ import {
   AngularFireAuthModule
 } from '@angular/fire/auth';
 
+import { FormsModule } from '@angular/forms';
+import { AngularFireDatabase } from '@angular/fire/database';
+
 const firebaseConfig = {
   apiKey: 'AIzaSyAfyRTxI0tm93cl5OvZF_bko_iDY4bgoDI',
   authDomain: 'disqus-76bcf.firebaseapp.com',
@@ -90,13 +93,14 @@ const appRoutes: Routes = [{
     AngularFirestoreModule, // firestore
     AngularFireAuthModule, // auth
     AngularFireStorageModule ,
+    FormsModule,
     RouterModule.forRoot(
       appRoutes, {
         enableTracing: false
       } // <-- debugging purposes only
     ),
   ],
-  providers: [],
+  providers: [AngularFireDatabase],
   bootstrap: [AppComponent]
 })
 export class AppModule {}

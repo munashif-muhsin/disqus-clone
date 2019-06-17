@@ -5,6 +5,12 @@ header{
     width: 100%;
 }
 
+.error-string{
+    margin: 10px 0px;
+    color: red;
+    font-size: 10px;
+}
+
 
 .model-backdrop{
     background: rgba(0,0,0,0.5);
@@ -54,6 +60,7 @@ header{
     background: #4d114f;
     font-size: 16px;
     color: white;
+    outline: none;
 }
 
 .login-modal button.submit:hover, .register-modal button.submit:hover{

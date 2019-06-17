@@ -6,61 +6,71 @@
       </h3>
     </div>
     <nav class="menu">
-      <div class="menu-item"><a href="">Register</a></div>
-      <div class="menu-item"><a href="">Login</a></div>
+      <div *ngIf="isLoggedIn == false">
+          <div class="menu-item" (click)="showRegisterModal()"><a>Register</a></div>
+          <div class="menu-item" (click)="showLoginModal()"><a>Login</a></div>
+      </div>
+      <div class="menu-item" (click)="logout()" *ngIf="isLoggedIn == true"><a>Logout</a></div>
+
     </nav>
 
   </div>
 </header>
 
-<!-- <div class="model-backdrop">
+<div class="model-backdrop" [hidden]="!isLoginModalShown" (click)="hideModals($event)">
 
-  <div class="login-modal">
+  <div class="login-modal" (click)="$event.stopPropagation()">
 
     <p class="greetings">Hello.</p>
     <form>
       <div class="form">
         <div class="input-group">
-          <input type="text" placeholder="Email">
+          <input type="text" placeholder="Email" [ngModelOptions]="{standalone: true}" [(ngModel)]="credentials.email">
         </div>
         <div class="input-group">
-          <input type="password" placeholder="Password">
+          <input type="password" placeholder="Password" [ngModelOptions]="{standalone: true}" [(ngModel)]="credentials.password">
         </div>
-        <button class="submit">
+        <button class="submit" (click)="validateForm()">
           Login
         </button>
+        <p class="error-string" *ngIf="errorString">
+          {{errorString}}
+        </p>
       </div>
     </form>
 
   </div>
 
-</div> -->
+</div>
 
-<!-- <div class="model-backdrop">
+<div class="model-backdrop" [hidden]="!isRegisterModalShown" (click)="hideModals()">
 
-  <div class="register-modal">
+  <div class="register-modal"  (click)="$event.stopPropagation()">
 
     <p class="greetings">Welcome.</p>
     <form>
       <div class="form">
         <div class="input-group">
-          <input type="text" placeholder="Email">
+          <input type="text" placeholder="Email" [ngModelOptions]="{standalone: true}" [(ngModel)]="credentials.email">
         </div>
         <div class="input-group">
-            <input type="text" placeholder="Full Name">
+            <input type="text" placeholder="Full Name" [ngModelOptions]="{standalone: true}" [(ngModel)]="credentials.name">
           </div>
         <div class="input-group">
-          <input type="password" placeholder="Password">
+          <input type="password" placeholder="Password" [ngModelOptions]="{standalone: true}" [(ngModel)]="credentials.password">
         </div>
         <div class="input-group">
-            <input type="password" placeholder="Confirm Password">
+            <input type="password" placeholder="Confirm Password" [ngModelOptions]="{standalone: true}" [(ngModel)]="credentials.confirmPassword">
           </div>
-        <button class="submit">
+        <button class="submit"  (click)="validateForm()">
           Register
         </button>
+        <p class="error-string" *ngIf="errorString">
+            {{errorString}}
+          </p>
       </div>
     </form>
 
   </div>
 
-</div> -->
+</div>
