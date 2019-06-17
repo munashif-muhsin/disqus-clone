@@ -21,11 +21,37 @@ import {
 import {
   HeaderComponent
 } from './modules/header/header.component';
-import { FooterComponent } from './modules/footer/footer.component';
-import { PostComponent } from './pages/post/post.component';
+import {
+  FooterComponent
+} from './modules/footer/footer.component';
+import {
+  PostComponent
+} from './pages/post/post.component';
 
-const appRoutes: Routes = [
-  {
+import {
+  AngularFireModule
+} from '@angular/fire';
+import {
+  AngularFirestoreModule
+} from '@angular/fire/firestore';
+import {
+  AngularFireStorageModule
+} from '@angular/fire/storage';
+import {
+  AngularFireAuthModule
+} from '@angular/fire/auth';
+
+const firebaseConfig = {
+  apiKey: 'AIzaSyAfyRTxI0tm93cl5OvZF_bko_iDY4bgoDI',
+  authDomain: 'disqus-76bcf.firebaseapp.com',
+  databaseURL: 'https://disqus-76bcf.firebaseio.com',
+  projectId: 'disqus-76bcf',
+  storageBucket: '',
+  messagingSenderId: '697347440910',
+  appId: '1:697347440910:web:32367d28a115a45d'
+};
+
+const appRoutes: Routes = [{
     path: 'admin',
     component: AdminComponent,
     data: {
@@ -60,6 +86,10 @@ const appRoutes: Routes = [
   ],
   imports: [
     BrowserModule,
+    AngularFireModule.initializeApp(firebaseConfig),
+    AngularFirestoreModule, // firestore
+    AngularFireAuthModule, // auth
+    AngularFireStorageModule ,
     RouterModule.forRoot(
       appRoutes, {
         enableTracing: false
