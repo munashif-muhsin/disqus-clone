@@ -40,6 +40,7 @@ export class HomeComponent implements OnInit {
           this.currentUser = user;
           this.isLoggedIn = true;
         } else {
+          this.currentUser = undefined;
           this.isLoggedIn = false;
         }
       });
@@ -48,7 +49,7 @@ export class HomeComponent implements OnInit {
   }
 
   async getPosts(): Promise < void > {
-    this.posts = await this.Posts.getPosts();
+    this.posts = (await this.Posts.getPosts()).reverse();
     console.log(this.posts);
   }
 
@@ -59,6 +60,9 @@ export class HomeComponent implements OnInit {
   }
 
   togglelike(id: string, isDisliked?: boolean) {
+    if (!this.currentUser) {
+      return;
+    }
     const postIndex = this.posts.findIndex((x) => x.id === id);
     if (postIndex < 0) {
       return;
@@ -81,6 +85,9 @@ export class HomeComponent implements OnInit {
   }
 
   toggleDislike(id: string, isLiked?: boolean) {
+    if (!this.currentUser) {
+      return;
+    }
     const postIndex = this.posts.findIndex((x) => x.id === id);
     if (postIndex < 0) {
       return;
