@@ -62,7 +62,7 @@ const appRoutes: Routes = [{
     }
   },
   {
-    path: 'post',
+    path: 'post/:id',
     component: PostComponent,
     data: {
       title: 'Post - Voter Circle'

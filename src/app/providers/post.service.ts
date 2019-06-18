@@ -7,9 +7,15 @@ import {
 import {
   Post
 } from '../modals/post';
-import { PostComment } from '../modals/comment';
-import { User } from '../modals/user';
-import { forEach } from '@angular/router/src/utils/collection';
+import {
+  PostComment
+} from '../modals/comment';
+import {
+  User
+} from '../modals/user';
+import {
+  forEach
+} from '@angular/router/src/utils/collection';
 import * as moment from 'moment';
 
 
@@ -20,8 +26,23 @@ export class PostService {
 
   constructor(private _fireDB: AngularFireDatabase) {}
 
-  async toggleLike(id: string, value: boolean, uid: string): Promise<boolean> {
-   let result: boolean;
+
+  async getPost(id: string): Promise < Post > {
+    try {
+      const snapshot = await this._fireDB.database.ref('/').child('posts').child(id).once('value');
+      const snapshotValue = snapshot.val();
+      if (snapshotValue) {
+        const post: Post = this._createpost(snapshotValue);
+        post.id = id;
+        return post;
+      }
+    } catch (error) {
+      return null;
+    }
+  }
+
+  async toggleLike(id: string, value: boolean, uid: string): Promise < boolean > {
+    let result: boolean;
     if (value) {
       result = await this._fireDB.database.ref('/').child('posts').child(id).child('likes').child(uid).set(true);
     } else {
@@ -30,7 +51,30 @@ export class PostService {
     return result;
   }
 
-  async toggleDislike(id: string, value: boolean, uid: string): Promise<boolean> {
+  async toggleCommentLike(postid: string, commentid: string, value: boolean, uid: string): Promise < boolean > {
+    let result: boolean;
+    if (value) {
+      // tslint:disable-next-line:max-line-length
+      result = await this._fireDB.database.ref('/').child('posts').child(postid).child('comments').child(commentid).child('likes').child(uid).set(true);
+    } else {
+      // tslint:disable-next-line:max-line-length
+      result = await this._fireDB.database.ref('/').child('posts').child(postid).child('comments').child(commentid).child('likes').child(uid).remove();
+    }
+    return result;
+  }
+  async toggleCommentDisLike(postid: string, commentid: string, value: boolean, uid: string): Promise < boolean > {
+    let result: boolean;
+    if (value) {
+      // tslint:disable-next-line:max-line-length
+      result = await this._fireDB.database.ref('/').child('posts').child(postid).child('comments').child(commentid).child('dislikes').child(uid).set(true);
+    } else {
+      // tslint:disable-next-line:max-line-length
+      result = await this._fireDB.database.ref('/').child('posts').child(postid).child('comments').child(commentid).child('dislikes').child(uid).remove();
+    }
+    return result;
+  }
+
+  async toggleDislike(id: string, value: boolean, uid: string): Promise < boolean > {
     let result: boolean;
     if (value) {
       result = await this._fireDB.database.ref('/').child('posts').child(id).child('dislikes').child(uid).set(true);
@@ -38,6 +82,30 @@ export class PostService {
       result = await this._fireDB.database.ref('/').child('posts').child(id).child('dislikes').child(uid).remove();
     }
     return result;
+  }
+
+  private _createpost(post: any): Post {
+    let comments;
+    console.log(post);
+    if (post.comments) {
+      const entries = Object.entries(post.comments);
+      const commentslist = entries.map((entry) => {
+        const newEntry: any = entry[1];
+        newEntry['key'] = entry[0];
+        return newEntry;
+      });
+      comments = commentslist.map((comment) => {
+        const formattedDate = moment(comment.date).calendar();
+        // tslint:disable-next-line:max-line-length
+        return new PostComment(comment.username, comment.userPicture, comment.date, comment.content, formattedDate, comment.key, comment.likes, comment.dislikes);
+      });
+    } else {
+      comments = [];
+    }
+    const date = moment(post.date).calendar();
+    const author = new User(post.author.name, post.author.email, post.author.uid);
+    const newPost: Post = new Post(author, post.content, post.date, post.likes, post.dislikes, comments, post.key, date);
+    return newPost;
   }
 
   async getPosts(): Promise < Array < Post >> {
@@ -53,18 +121,7 @@ export class PostService {
         return newEntry;
       });
       const ListOfPosts = postsList.map((post) => {
-        let comments;
-        if (post.comments) {
-          comments = post.comments.map((comment) => {
-            return new PostComment(comment.username, comment.userPicture, comment.date, comment.content);
-          });
-        } else {
-          comments = [];
-        }
-        const date = moment(post.date).calendar();
-        const author = new User(post.author.name, post.author.email, post.author.uid);
-        const newPost: Post = new Post(author, post.content, post.date, post.likes, post.dislikes, comments, post.key, date);
-        return newPost;
+        return this._createpost(post);
       });
       return ListOfPosts;
     } catch (error) {
@@ -73,7 +130,7 @@ export class PostService {
     }
   }
 
-  async addPost(post: Post): Promise<string> {
+  async addPost(post: Post): Promise < string > {
     try {
       const newpost = {
         author: post.author.jsonData,
@@ -90,5 +147,17 @@ export class PostService {
       return 'false';
     }
   }
-}
 
+  async addComment(comment: PostComment, postId: string): Promise<string> {
+    try {
+      const commentData = comment.jsonData;
+      delete commentData.id;
+      delete commentData.formattedDate;
+      const result = await this._fireDB.database.ref('/').child('posts').child(postId).child('comments').push(commentData);
+      return result.key;
+    } catch (error) {
+      console.log(error);
+      return null;
+    }
+  }
+}

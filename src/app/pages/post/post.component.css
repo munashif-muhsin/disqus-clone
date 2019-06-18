@@ -140,6 +140,7 @@ div.post-page div.posts .post-item .content {
     color: grey;
     font-size: 11px;
     font-weight: bold;
+    cursor: pointer;
 }
 
 .reply-comments{

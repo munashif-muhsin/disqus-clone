@@ -37,10 +37,10 @@
             </p>
           </div>
           <div class="content-footer">
-            <a class="comments" *ngIf="item.comments.length > 0">
+            <a class="comments" *ngIf="item.comments.length > 0" [routerLink]="'/post/' +item.id"  >
               {{item.comments.length}} Comments
             </a>
-            <a class="comments" *ngIf="item.comments.length == 0">
+            <a class="comments" *ngIf="item.comments.length == 0" [routerLink]="'/post/' +item.id">
               Add Comment
             </a>
           </div>
