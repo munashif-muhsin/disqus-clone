@@ -8,9 +8,10 @@ export class PostComment {
     private _id: string;
     private _likes: {};
     private _dislikes: {};
+    private _replies: Array<PostComment>;
 
     // tslint:disable-next-line:max-line-length
-    constructor(username: string, userPicture: string, date: number, content: string, formattedDate: string, id: string,  likes: {}, dislikes: {}) {
+    constructor(username: string, userPicture: string, date: number, content: string, formattedDate: string, id: string,  likes: {}, dislikes: {}, replies: Array<PostComment> = []) {
         this._content = content;
         this._date = date;
         this._userPicture = userPicture;
@@ -19,10 +20,15 @@ export class PostComment {
         this._id = id;
         this._likes = likes;
         this._dislikes = dislikes;
+        this._replies = replies;
     }
 
     get username() {
         return this._username;
+    }
+
+    get replies() {
+        return this._replies;
     }
 
     get userPicture() {

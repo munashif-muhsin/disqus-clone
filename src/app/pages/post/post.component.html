@@ -55,76 +55,40 @@
                 <p>{{commentItem.content}}</p>
               </div>
               <div class="comment-footer">
-                  <a> Reply</a> 
+                  <a (click)="toggleReply(commentItem.id)"> Reply</a> 
                   <a (click)="toggleCommentLike(commentItem.id)"><span *ngIf="commentItem.likesCount > 0">{{commentItem.likesCount}}</span> Like<span *ngIf="commentItem.likesCount > 1">s</span> </a> 
                   <a (click)="toggleCommentDislike(commentItem.id)"><span *ngIf="commentItem.disLikesCount > 0">{{commentItem.disLikesCount}}</span> Dislike<span *ngIf="commentItem.disLikesCount > 1">s</span> </a> 
               </div>
              
 
-              <div class="reply-comments" *ngIf="false">
-                  <div class="comment-block" *ngIf="isLoggedIn == true">
-                      <p>Comment as Munashif Muhsin</p>
+              <div class="reply-comments" >
+                  <div class="comment-block" *ngIf="isLoggedIn == true && showReplyBoxId == commentItem.id">
+                      <p *ngIf="currentUser">Comment as {{currentUser.name}}</p>
                       <div class="comment-box">
-                        <textarea name="" id="" rows="5" placeholder="What do you think?"></textarea>
+                        <textarea name="" id="" rows="5" placeholder="What do you think?" [(ngModel)]="reply"></textarea>
                       </div>
-                      <button class="submit">
+                      <button class="submit" (click)="addReply(commentItem.id)">
                         Comment
                       </button>
                     </div>
                     <div class="comment-block" *ngIf="isLoggedIn == false">
                         <p>Sing in to comment</p>
                       </div>
-                    <div class="comment">
+                    <div class="comment" *ngFor="let replyItem of commentItem.replies">
                         <div class="comment-header">
-                          <p>Munashif Muhsin <span>13 Hours ago.</span> </p>
+                          <p>{{replyItem.username}} <span>{{replyItem.formattedDate}}</span> </p>
                         </div>
                         <div class="comment-body">
-                          <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Perspiciatis rerum tempore expedita praesentium voluptatibus harum, culpa delectus ad facilis fugit magni aut veniam eligendi. Eius similique rerum eligendi sint cupiditate!</p>
+                          <p>{{replyItem.content}}</p>
                         </div>
                         <div class="comment-footer">
-                          <a href=""> Like</a> <a href="">Dislike</a> 
+                            <a (click)="toggleReplyLike(replyItem.id, commentItem.id)"><span *ngIf="replyItem.likesCount > 0">{{replyItem.likesCount}}</span> Like<span *ngIf="replyItem.likesCount > 1">s</span> </a> 
+                            <a (click)="toggleReplyDislike(replyItem.id, commentItem.id)"><span *ngIf="replyItem.disLikesCount > 0">{{replyItem.disLikesCount}}</span> Dislike<span *ngIf="replyItem.disLikesCount > 1">s</span> </a> 
                         </div>
 
               </div>
             </div>
           </div>
-
-          <!-- <div class="comment">
-              <div class="comment-header">
-                <p>Munashif Muhsin <span>13 Hours ago.</span> </p>
-              </div>
-              <div class="comment-body">
-                <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Perspiciatis rerum tempore expedita praesentium voluptatibus harum, culpa delectus ad facilis fugit magni aut veniam eligendi. Eius similique rerum eligendi sint cupiditate!</p>
-              </div>
-              <div class="comment-footer">
-                  <a href=""> Reply</a> <a href=""> Like</a> <a href="">Dislike</a> 
-              </div>
-             
-
-              <div class="reply-comments">
-                  <div class="comment-block">
-                      <p>Comment as Munashif Muhsin</p>
-                      <div class="comment-box">
-                        <textarea name="" id="" rows="5" placeholder="What do you think?"></textarea>
-                      </div>
-                      <button class="submit">
-                        Comment
-                      </button>
-                    </div>
-                    <div class="comment">
-                        <div class="comment-header">
-                          <p>Munashif Muhsin <span>13 Hours ago.</span> </p>
-                        </div>
-                        <div class="comment-body">
-                          <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Perspiciatis rerum tempore expedita praesentium voluptatibus harum, culpa delectus ad facilis fugit magni aut veniam eligendi. Eius similique rerum eligendi sint cupiditate!</p>
-                        </div>
-                        <div class="comment-footer">
-                          <a href=""> Like</a> <a href="">Dislike</a> 
-                        </div>
-
-              </div>
-            </div>
-          </div> -->
 
         </div>
       </div>

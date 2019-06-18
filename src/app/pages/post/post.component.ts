@@ -25,6 +25,8 @@ export class PostComponent implements OnInit {
   currentUser;
   isLoggedIn: boolean;
   comment: string;
+  showReplyBoxId: string;
+  reply: string;
 
   constructor(private route: ActivatedRoute, private postService: PostService, private Account: AccountService, private _zone: NgZone) {
     this.Account._auth.onAuthStateChanged((user) => {
@@ -57,8 +59,31 @@ export class PostComponent implements OnInit {
     }
   }
 
+  toggleReply(commentId: string): void {
+    this.showReplyBoxId = commentId;
+  }
+
+  async addReply(commentId: string): Promise<void> {
+    if (!this.currentUser) {
+      return;
+    }
+    if (!this.reply || this.reply.trim() === '') {
+      return;
+    }
+    // tslint:disable-next-line:max-line-length
+    const newreply: PostComment = new PostComment(this.currentUser.name, '', Date.now(), this.reply, moment().calendar(), 'not_available',  {}, {});
+    const result = await this.postService.addReply(newreply, this.postId, commentId);
+    if (result) {
+      newreply.id = result;
+      this.comment = '';
+      const commentIndex = this.post.comments.findIndex((x) => x.id === commentId);
+      this.post.comments[commentIndex].replies.unshift(newreply);
+    }
+  }
+
+
+
   toggleCommentLike(id: string, isDisliked?: boolean) {
-    console.log('comment like called');
     if (!this.currentUser) {
       return;
     }
@@ -80,7 +105,7 @@ export class PostComponent implements OnInit {
     this.post.comments[commentIndex] = comment;
   }
 
-  toggleCommentDislike(id: string, isDisliked?: boolean) {
+  toggleCommentDislike(id: string, isliked?: boolean) {
     if (!this.currentUser) {
       return;
     }
@@ -93,13 +118,61 @@ export class PostComponent implements OnInit {
       delete comment.dislikes[this.currentUser.uid];
       this.postService.toggleCommentDisLike(this.post.id, comment.id, false, this.currentUser.uid);
     } else {
-      if (!isDisliked) {
+      if (!isliked) {
         this.toggleCommentLike(id, true);
         comment.dislikes[this.currentUser.uid] = true;
         this.postService.toggleCommentDisLike(this.post.id, comment.id, true, this.currentUser.uid);
       }
     }
     this.post.comments[commentIndex] = comment;
+  }
+
+  toggleReplyLike(replyid: string, id: string, isDisliked?: boolean) {
+    if (!this.currentUser) {
+      return;
+    }
+    const commentIndex = this.post.comments.findIndex((x) => x.id === id);
+    const comment = this.post.comments[commentIndex];
+    const replyIndex = comment.replies.findIndex((x) => x.id === replyid);
+    const reply = comment.replies[replyIndex];
+    if (!reply.likes) {
+      reply.likes = {};
+    }
+    if (reply.likes[this.currentUser.uid]) {
+      delete reply.likes[this.currentUser.uid];
+      this.postService.toggleReplyLike(this.post.id, comment.id, reply.id, false, this.currentUser.uid);
+    } else {
+      if (!isDisliked) {
+        this.toggleReplyDislike(replyid, id, true);
+        reply.likes[this.currentUser.uid] = true;
+        this.postService.toggleReplyLike(this.post.id, comment.id, reply.id, true, this.currentUser.uid);
+      }
+    }
+    this.post.comments[commentIndex].replies[replyIndex] = reply;
+  }
+
+  toggleReplyDislike(replyid: string, id: string, isliked?: boolean) {
+    if (!this.currentUser) {
+      return;
+    }
+    const commentIndex = this.post.comments.findIndex((x) => x.id === id);
+    const comment = this.post.comments[commentIndex];
+    const replyIndex = comment.replies.findIndex((x) => x.id === replyid);
+    const reply = comment.replies[replyIndex];
+    if (!reply.dislikes) {
+      reply.dislikes = {};
+    }
+    if (reply.dislikes[this.currentUser.uid]) {
+      delete reply.dislikes[this.currentUser.uid];
+      this.postService.toggleReplyDisLike(this.post.id, comment.id, reply.id, false, this.currentUser.uid);
+    } else {
+      if (!isliked) {
+        this.toggleReplyLike(replyid, id, true);
+        reply.dislikes[this.currentUser.uid] = true;
+        this.postService.toggleReplyDisLike(this.post.id, comment.id, reply.id, true, this.currentUser.uid);
+      }
+    }
+    this.post.comments[commentIndex].replies[replyIndex] = reply;
   }
 
   async setUser(): Promise<void> {

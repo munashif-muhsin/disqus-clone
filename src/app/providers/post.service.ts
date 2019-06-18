@@ -74,6 +74,29 @@ export class PostService {
     return result;
   }
 
+  async toggleReplyLike(postid: string, commentid: string, replyid: string, value: boolean, uid: string): Promise < boolean > {
+    let result: boolean;
+    if (value) {
+      // tslint:disable-next-line:max-line-length
+      result = await this._fireDB.database.ref('/').child('posts').child(postid).child('comments').child(commentid).child('replies').child(replyid).child('likes').child(uid).set(true);
+    } else {
+      // tslint:disable-next-line:max-line-length
+      result = await this._fireDB.database.ref('/').child('posts').child(postid).child('comments').child(commentid).child('replies').child(replyid).child('likes').child(uid).remove();
+    }
+    return result;
+  }
+  async toggleReplyDisLike(postid: string, commentid: string, replyid: string, value: boolean, uid: string): Promise < boolean > {
+    let result: boolean;
+    if (value) {
+      // tslint:disable-next-line:max-line-length
+      result = await this._fireDB.database.ref('/').child('posts').child(postid).child('comments').child(commentid).child('replies').child(replyid).child('dislikes').child(uid).set(true);
+    } else {
+      // tslint:disable-next-line:max-line-length
+      result = await this._fireDB.database.ref('/').child('posts').child(postid).child('comments').child(commentid).child('replies').child(replyid).child('dislikes').child(uid).remove();
+    }
+    return result;
+  }
+
   async toggleDislike(id: string, value: boolean, uid: string): Promise < boolean > {
     let result: boolean;
     if (value) {
@@ -84,21 +107,32 @@ export class PostService {
     return result;
   }
 
+  private _createComments(comments: any): Array<any> {
+    const entries = Object.entries(comments);
+    const commentslist = entries.map((entry) => {
+      const newEntry: any = entry[1];
+      newEntry['key'] = entry[0];
+      return newEntry;
+    });
+    comments = [];
+    comments = commentslist.map((comment) => {
+      if (comment.replies) {
+        comment.replies = this._createComments(comment.replies);
+      } else {
+        comment.replies = [];
+      }
+      const formattedDate = moment(comment.date).calendar();
+      // tslint:disable-next-line:max-line-length
+      return new PostComment(comment.username, comment.userPicture, comment.date, comment.content, formattedDate, comment.key, comment.likes, comment.dislikes, comment.replies);
+    });
+    return comments;
+  }
+
   private _createpost(post: any): Post {
     let comments;
     console.log(post);
     if (post.comments) {
-      const entries = Object.entries(post.comments);
-      const commentslist = entries.map((entry) => {
-        const newEntry: any = entry[1];
-        newEntry['key'] = entry[0];
-        return newEntry;
-      });
-      comments = commentslist.map((comment) => {
-        const formattedDate = moment(comment.date).calendar();
-        // tslint:disable-next-line:max-line-length
-        return new PostComment(comment.username, comment.userPicture, comment.date, comment.content, formattedDate, comment.key, comment.likes, comment.dislikes);
-      });
+      comments = this._createComments(post.comments);
     } else {
       comments = [];
     }
@@ -154,6 +188,20 @@ export class PostService {
       delete commentData.id;
       delete commentData.formattedDate;
       const result = await this._fireDB.database.ref('/').child('posts').child(postId).child('comments').push(commentData);
+      return result.key;
+    } catch (error) {
+      console.log(error);
+      return null;
+    }
+  }
+
+  async addReply(reply: PostComment, postId: string, commentId): Promise<string> {
+    try {
+      const commentData = reply.jsonData;
+      delete commentData.id;
+      delete commentData.formattedDate;
+      // tslint:disable-next-line:max-line-length
+      const result = await this._fireDB.database.ref('/').child('posts').child(postId).child('comments').child(commentId).child('replies').push(commentData);
       return result.key;
     } catch (error) {
       console.log(error);
