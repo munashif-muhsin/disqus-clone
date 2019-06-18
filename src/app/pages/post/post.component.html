@@ -71,7 +71,7 @@
                         Comment
                       </button>
                     </div>
-                    <div class="comment-block" *ngIf="isLoggedIn == false">
+                    <div class="comment-block" *ngIf="isLoggedIn == false  && showReplyBoxId == commentItem.id">
                         <p>Sing in to comment</p>
                       </div>
                     <div class="comment" *ngFor="let replyItem of commentItem.replies">

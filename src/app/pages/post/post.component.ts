@@ -78,6 +78,8 @@ export class PostComponent implements OnInit {
       this.comment = '';
       const commentIndex = this.post.comments.findIndex((x) => x.id === commentId);
       this.post.comments[commentIndex].replies.unshift(newreply);
+      this.reply = '';
+      this.showReplyBoxId = undefined;
     }
   }
 
