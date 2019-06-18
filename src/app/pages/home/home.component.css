@@ -3,6 +3,13 @@
     padding-top: 70px;
 }
 
+.create-post {
+    background: #4d114f;
+    color: white;
+    padding: 10px 15px;
+    float: right;
+}
+
 
 div.home-page div.container{
     max-width: 500px;
@@ -17,6 +24,9 @@ div.home-page div.welcome-message p{
     font-size: 12px;
     margin: 0px;
     color: #676767;
+    height: 35px;
+    line-height: 35px;
+    display: inline-block;
 }
 
 div.home-page div.posts {
@@ -96,4 +106,50 @@ div.home-page div.posts .post-item .content {
 .content-footer a:hover {
     background: #ececec;
     color: #4d114f;
+}
+
+.model-backdrop{
+    background: rgba(0,0,0,0.5);
+    position: fixed;
+    width: 100%;
+    height: 100vh;
+    z-index: 999;
+    display: flex;
+    align-items: center;
+    top: 0;
+}
+
+.create-post-modal{
+    margin: 0 auto;
+    background: white;
+    height: 200px;
+    width: 500px;
+    padding: 20px;
+}
+
+
+
+.create-post-modal .input-group textarea{
+    resize: none;
+    width: 100%;
+    height: 100%;
+    outline: none;
+    font-size: 12px;
+    padding: 10px;
+    border: none;
+    border: 1px solid grey;
+}
+
+.create-post-modal button.submit {
+    border: 1px solid #4d114f;
+    background: #4d114f;
+    outline: none;
+    color: white;
+    margin-top: 20px;
+    font-size: 12px; 
+}
+
+p.error-message {
+    margin: 10px 0px;
+    color: red;
 }

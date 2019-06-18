@@ -1,76 +1,72 @@
 <div class="home-page">
 
   <div class="container">
-    <div class="welcome-message">
+    <div class="welcome-message" *ngIf="isLoggedIn == true">
       <p>Hello Munashif Muhsin</p>
+      <button class="create-post" (click)="isCreatePostModalShown = true">
+        New Post
+      </button>
     </div>
-    <div class="welcome-message">
-        <p>Hello! login to comment.</p>
-      </div>
+    <div class="welcome-message" *ngIf="isLoggedIn == false">
+      <p>Hello! login to comment.</p>
+    </div>
     <div class="posts">
-      <div class="post-item">
+      <div class="post-item" *ngFor="let item of posts">
         <div class="buttons">
-          <div class="button-item">
-            <a href="">
+          <div class="button-item" (click)="togglelike(item.id)">
+            <a>
               <img src="assets/icons/arrow-up.svg" alt="" srcset="">
             </a>
-            <p>35.5k</p>
+            <p>{{item.likesCount}}</p>
           </div>
-          <div class="button-item">
-            <a href="">
+          <div class="button-item" (click)="toggleDislike(item.id)">
+            <a>
               <img src="assets/icons/arrow-down.svg" alt="" srcset="">
             </a>
-            <p>35.5k</p>
+            <p>{{item.disLikesCount}}</p>
           </div>
         </div>
         <div class="content">
-          <div class="content-header">
-            <p>Posted by <span class="post-author">Munashif Muhsin</span> <span class="posted-time">14 Hours ago</span></p>
+          <div class="content-header" *ngIf="item.author">
+            <p>Posted by <span class="post-author">{{item.author.name}}</span> <span
+                class="posted-time">{{item.formattedDate}}</span></p>
           </div>
           <div class="content-body">
-            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Nemo assumenda aut dolor obcaecati, iure, quas iste accusantium reiciendis eaque perferendis maxime laborum sint mollitia neque delectus nesciunt praesentium voluptas eligendi?
+            <p>
+              {{item.content}}
             </p>
           </div>
           <div class="content-footer">
-            <a class="comments" [routerLink]="['/post']">
-              24 Comments
+            <a class="comments" *ngIf="item.comments.length > 0">
+              {{item.comments.length}} Comments
+            </a>
+            <a class="comments" *ngIf="item.comments.length == 0">
+              Add Comment
             </a>
           </div>
         </div>
       </div>
-      <div class="post-item">
-          <div class="buttons">
-            <div class="button-item">
-              <a href="">
-                <img src="assets/icons/arrow-up.svg" alt="" srcset="">
-              </a>
-              <p>35.5k</p>
-            </div>
-            <div class="button-item">
-              <a href="">
-                <img src="assets/icons/arrow-down.svg" alt="" srcset="">
-              </a>
-              <p>35.5k</p>
-            </div>
-          </div>
-          <div class="content">
-            <div class="content-header">
-              <p>Posted by <span class="post-author">Munashif Muhsin</span> <span class="posted-time">14 Hours ago</span></p>
-            </div>
-            <div class="content-body">
-              <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Nemo assumenda aut dolor obcaecati, iure, quas iste accusantium reiciendis eaque perferendis maxime laborum sint mollitia neque delectus nesciunt praesentium voluptas eligendi?
-              </p>
-            </div>
-            <div class="content-footer">
-              <a class="comments">
-                24 Comments
-              </a>
-            </div>
-          </div>
-        </div>
     </div>
   </div>
 
 </div>
 
+<div class="model-backdrop" [hidden]="!isCreatePostModalShown" (click)="hideModal()">
 
+  <div class="create-post-modal" (click)="$event.stopPropagation()">
+
+    <form>
+      <div class="form">
+        <div class="input-group">
+          <textarea rows="5" placeholder="What do you have in Mind?" [(ngModel)]="newpost.content" [ngModelOptions]="{standalone: true}"></textarea>
+        </div>
+        <button class="submit" (click)="validate()">Post</button>
+        <p class="error-message">
+          {{errorMessage}}
+        </p>
+      </div>
+    </form>
+
+  </div>
+
+</div>

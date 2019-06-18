@@ -34,6 +34,10 @@ export class AccountService {
     }
   }
 
+  get user() {
+    return this._fireDB.database.ref('/').child('users').child(this._auth.currentUser.uid).once('value');
+  }
+
   get _auth() {
     return this._fireAuth.auth;
   }
@@ -49,7 +53,6 @@ export class AccountService {
       console.log(error);
       return false;
     }
-    return false;
   }
 
   logout() {

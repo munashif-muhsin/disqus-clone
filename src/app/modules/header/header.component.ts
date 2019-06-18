@@ -11,7 +11,7 @@ export class HeaderComponent implements OnInit {
   isRegisterModalShown = false;
   isLoginModalShown = false;
   credentials: any = {};
-  isLoggedIn;
+  isLoggedIn: boolean;
   errorString: string;
 
   constructor(private Account: AccountService, private _zone: NgZone) {
@@ -93,9 +93,6 @@ export class HeaderComponent implements OnInit {
       this.errorString = 'Email should not be empty';
     }
 
-    console.log('validations passed');
-    
-    
     if (this.errorString != null) {
       setTimeout(() => {
         this.errorString = null;
