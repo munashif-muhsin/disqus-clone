@@ -24,11 +24,9 @@
               "src/assets/*"
             ],
             "styles": [
-              "src/styles.css",
-              "src/assets/css/bootstrap.min.css"
+              "src/styles.css"
             ],
             "scripts": [
-              "src/assets/js/bootstrap.js"
             ]
           },
           "configurations": {
