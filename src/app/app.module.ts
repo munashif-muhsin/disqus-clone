@@ -45,13 +45,13 @@ import { FormsModule } from '@angular/forms';
 import { AngularFireDatabase } from '@angular/fire/database';
 
 const firebaseConfig = {
-  apiKey: 'AIzaSyAfyRTxI0tm93cl5OvZF_bko_iDY4bgoDI',
-  authDomain: 'disqus-76bcf.firebaseapp.com',
-  databaseURL: 'https://disqus-76bcf.firebaseio.com',
-  projectId: 'disqus-76bcf',
+  apiKey: '',
+  authDomain: '',
+  databaseURL: '',
+  projectId: '',
   storageBucket: '',
-  messagingSenderId: '697347440910',
-  appId: '1:697347440910:web:32367d28a115a45d'
+  messagingSenderId: '',
+  appId: ''
 };
 
 const appRoutes: Routes = [{
